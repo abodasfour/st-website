@@ -11,24 +11,24 @@
         },
         {
             studentName: "خالد علي",
-            course: "هياكل بيانات (CS201)",
-            proposedTime: "الإثنين الساعة 3 مساءً",
-            tutorName: "عبد الرحمن عصفور",
-            status: "مقبول"
+            course: "برمجة 1 (CS101)",
+            proposedTime: "الأحد القادم الساعة 4 عصراً",
+            tutorName: "محمد الابراهيم",
+            status: "قيد الانتظار"
         },
         {
             studentName: "نورة سالم",
-            course: "رياضيات متقطعة (MATH102)",
-            proposedTime: "الخميس الساعة 11 صباحاً",
-            tutorName: "عمر خالد",
-            status: "مرفوض"
-        },
-        {
-            studentName: "يوسف حسن",
             course: "برمجة 1 (CS101)",
             proposedTime: "الثلاثاء الساعة 5 مساءً",
             tutorName: "محمد الابراهيم",
             status: "قيد الانتظار"
+        },
+        {
+            studentName: "يوسف حسن",
+            course: "برمجة 1 (CS101)",
+            proposedTime: "الخميس الساعة 4 عصراً",
+            tutorName: "محمد الابراهيم",
+            status: "مقبول"
         }
     ];
 
@@ -99,7 +99,73 @@
         }
         badge.textContent = request.status;
         card.appendChild(badge);
+
+        if (request.status === "قيد الانتظار") {
+            const actions = document.createElement("div");
+            actions.className = "request-actions";
+
+            const acceptButton = document.createElement("button");
+            acceptButton.type = "button";
+            acceptButton.className = "request-action request-action--accept";
+            acceptButton.textContent = "قبول";
+            acceptButton.addEventListener("click", () => acceptRequest(request));
+
+            const rejectButton = document.createElement("button");
+            rejectButton.type = "button";
+            rejectButton.className = "request-action request-action--reject";
+            rejectButton.textContent = "رفض";
+            rejectButton.addEventListener("click", () => rejectRequest(request));
+
+            actions.append(acceptButton, rejectButton);
+            card.appendChild(actions);
+        }
+
         return card;
+    }
+
+    function normalizeProposedTime(time) {
+        return time.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+    }
+
+    function hasAcceptedTimeConflict(request) {
+        const proposedTime = normalizeProposedTime(request.proposedTime);
+        return typeof request.tutorName === "string" &&
+            request.tutorName.trim() !== "" &&
+            requests.some(existingRequest =>
+                existingRequest !== request &&
+                existingRequest.status === "مقبول" &&
+                existingRequest.tutorName === request.tutorName &&
+                normalizeProposedTime(existingRequest.proposedTime) === proposedTime
+            );
+    }
+
+    function updateRequestStatus(request, status) {
+        const previousStatus = request.status;
+        request.status = status;
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(requests));
+            storageError = "";
+            renderRequests();
+        } catch (error) {
+            request.status = previousStatus;
+            console.error("Unable to update tutoring request status.", error);
+            alert("تعذر حفظ تحديث حالة الطلب. يرجى المحاولة مرة أخرى.");
+        }
+    }
+
+    function acceptRequest(request) {
+        if (hasAcceptedTimeConflict(request)) {
+            alert("لا يمكن قبول الطلب لوجود جلسة مقبولة أخرى في نفس الوقت");
+            return;
+        }
+        updateRequestStatus(request, "مقبول");
+    }
+
+    function rejectRequest(request) {
+        if (!window.confirm("هل أنت متأكد من رفض هذا الطلب؟")) {
+            return;
+        }
+        updateRequestStatus(request, "مرفوض");
     }
 
     function renderRequests() {

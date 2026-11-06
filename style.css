@@ -92,6 +92,33 @@
     text-align: center;
 }
 
+.request-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.request-action {
+    min-width: 90px;
+    padding: 9px 16px;
+}
+
+.request-action--accept {
+    background: #16a34a;
+}
+
+.request-action--accept:hover {
+    background: #15803d;
+}
+
+.request-action--reject {
+    background: #dc2626;
+}
+
+.request-action--reject:hover {
+    background: #b91c1c;
+}
+
 @media (max-width: 600px) {
     .site-nav {
         flex-direction: column;
@@ -109,5 +136,13 @@
 
     .request-filter-card select {
         max-width: none;
+    }
+
+    .request-actions {
+        flex-direction: column;
+    }
+
+    .request-action {
+        width: 100%;
     }
 }
