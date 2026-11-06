@@ -36,6 +36,34 @@
     max-width: 260px;
 }
 
+.student-identity-card {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+}
+
+.student-identity-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.student-identity-controls input {
+    margin-bottom: 0;
+}
+
+.student-identity-controls button {
+    flex-shrink: 0;
+}
+
+.identity-hint {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
 .requests-grid {
     display: flex;
     flex-direction: column;
@@ -136,6 +164,10 @@
 
     .request-filter-card select {
         max-width: none;
+    }
+
+    .student-identity-controls {
+        flex-direction: column;
     }
 
     .request-actions {

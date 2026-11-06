@@ -138,6 +138,7 @@
     <nav class="site-nav" aria-label="التنقل الرئيسي">
         <a class="nav-link" href="#tutorsPage" data-page="tutorsPage">البحث عن مدرس</a>
         <a class="nav-link" href="#incomingRequests" data-page="incomingRequests">الطلبات الواردة</a>
+        <a class="nav-link" href="#myRequests" data-page="myRequests">طلباتي</a>
     </nav>
 
     <main id="tutorsPage" class="page-view">
@@ -212,6 +213,31 @@
         </div>
         <div id="incomingRequestsList" class="requests-grid" aria-live="polite"></div>
     </section>
+
+    <section id="myRequests" class="page-view hidden" aria-labelledby="myRequestsTitle">
+        <div class="header">
+            <h1 id="myRequestsTitle">طلباتي</h1>
+            <p>تابع حالة طلبات جلسات التدريس التي أرسلتها</p>
+        </div>
+        <form id="studentIdentityForm" class="student-identity-card">
+            <label for="studentIdentityInput"><strong>اسم الطالب:</strong></label>
+            <div class="student-identity-controls">
+                <input type="text" id="studentIdentityInput" placeholder="اكتب الاسم المستخدم في طلباتك" required>
+                <button type="submit">حفظ الاسم</button>
+            </div>
+            <p class="identity-hint">استخدم الاسم نفسه الذي أدخلته عند إرسال طلب الجلسة.</p>
+        </form>
+        <div class="request-filter-card">
+            <label for="myRequestStatusFilter"><strong>تصفية حسب الحالة:</strong></label>
+            <select id="myRequestStatusFilter">
+                <option value="الكل">الكل</option>
+                <option value="قيد الانتظار">قيد الانتظار</option>
+                <option value="مقبول">مقبول</option>
+                <option value="مرفوض">مرفوض</option>
+            </select>
+        </div>
+        <div id="myRequestsList" class="requests-grid" aria-live="polite"></div>
+    </section>
 </div>
 
 <script>
@@ -271,6 +297,7 @@
     function cancelRequest() {
         requestFormSection.classList.add('hidden');
         document.getElementById('sessionForm').reset();
+        document.getElementById('studentName').value = window.getStudentIdentity();
     }
 
     function submitSessionRequest(event) {
@@ -278,6 +305,11 @@
         const time = document.getElementById('proposedTime').value;
         const studentName = document.getElementById('studentName').value.trim();
         const desc = document.getElementById('issueDescription').value;
+
+        if (!window.setStudentIdentity(studentName)) {
+            alert("تعذر حفظ اسم الطالب. يرجى المحاولة مرة أخرى.");
+            return;
+        }
 
         const tutor = tutorsData.find(item => item.name === selectedTutor);
         const saved = window.saveIncomingRequest({
