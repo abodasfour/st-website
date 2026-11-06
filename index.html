@@ -1,47 +1,259 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قهوة وكتاب</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة التدريس النظير - البحث عن مدرس</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
+        }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 32px 16px;
-      font-family: Arial, sans-serif;
-      background: #f6f1e8;
-      color: #34251f;
-      line-height: 1.8;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+        }
 
-    main {
-      max-width: 720px;
-      margin: auto;
-      padding: 24px;
-      background: white;
-      border-radius: 12px;
-    }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-    h1 {
-      color: #70452b;
-    }
-  </style>
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0 0 8px 0;
+            color: #70452b;
+        }
+
+        .filter-card, .request-form-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .filter-card {
+            display: flex;
+            gap: 12px;
+        }
+
+        select, input, textarea, button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        select, input, textarea {
+            border: 1px solid var(--border);
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+
+        select {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .tutors-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tutor-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tutor-info h3 {
+            margin: 0 0 8px 0;
+            color: var(--primary);
+        }
+
+        .tutor-info p {
+            margin: 4px 0;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
-  <main>
-    <h1>قهوة وكتاب</h1>
 
-    <p>
-      مقهى هادئ للاستمتاع بالقهوة والقراءة والعمل.
-    </p>
+<div class="container">
+    <div class="header">
+        <h1>منصة التدريس النظير (SPTP)</h1>
+        <p>ابحث عن زميل ليساعدك في المقررات الدراسية</p>
+    </div>
 
-    <section>
-      <h2>ساعات العمل</h2>
-      <p>يوميًا من الساعة 8 صباحًا حتى 10 مساءً.</p>
-    </section>
-  </main>
+    <!-- قسم البحث والتصفية -->
+    <div class="filter-card">
+        <select id="courseSelect">
+            <option value="">جميع المقررات الدراسية</option>
+            <option value="CS101">برمجة 1 (CS101)</option>
+            <option value="CS201">هياكل بيانات (CS201)</option>
+            <option value="MATH102">رياضيات متقطعة (MATH102)</option>
+        </select>
+        <button id="searchBtn">بحث</button>
+    </div>
+
+    <!-- نموذج طلب جلسة (يظهر عند النقر على طلب جلسة) -->
+    <div id="requestFormSection" class="request-form-card hidden">
+        <h3 id="formTitle" style="margin-top: 0; color: var(--primary);">إرسال طلب جلسة</h3>
+        <form id="sessionForm" onsubmit="submitSessionRequest(event)">
+            <label><strong>الوقت المقترح:</strong></label>
+            <input type="text" id="proposedTime" placeholder="مثال: الأحد القادم الساعة 4 عصراً" required>
+            
+            <label><strong>شرح الصعوبة أو الاحتياج:</strong></label>
+            <textarea id="issueDescription" rows="3" placeholder="اكتب باختصار الموضوع الذي تحتاج مساعدة فيه..." required></textarea>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" style="flex: 1;">تأكيد وإرسال الطلب</button>
+                <button type="button" onclick="cancelRequest()" style="background-color: #64748b; flex: 1;">إلغاء</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- بطاقات المدرسين -->
+    <div class="tutors-grid" id="tutorsList">
+        <div class="tutor-card">
+            <div class="tutor-info">
+                <h3>محمد الابراهيم</h3>
+                <p><strong>المقرر:</strong> برمجة 1 (CS101)</p>
+                <p><strong>الأوقات المتاحة:</strong> الأحد والثلاثاء (04:00 م - 06:00 م)</p>
+                <span class="badge">متاح لتقديم الدعم</span>
+            </div>
+            <button class="request-btn" onclick="openRequestForm('محمد الابراهيم')">طلب جلسة</button>
+        </div>
+
+        <div class="tutor-card">
+            <div class="tutor-info">
+                <h3>عبد الرحمن عصفور</h3>
+                <p><strong>المقرر:</strong> هياكل بيانات (CS201)</p>
+                <p><strong>الأوقات المتاحة:</strong> الإثنين والأربعاء (02:00 م - 04:00 م)</p>
+                <span class="badge">متاح لتقديم الدعم</span>
+            </div>
+            <button class="request-btn" onclick="openRequestForm('عبد الرحمن عصفور')">طلب جلسة</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tutorsData = [
+        { name: "محمد الابراهيم", course: "CS101", courseName: "برمجة 1 (CS101)", time: "الأحد والثلاثاء (04:00 م - 06:00 م)" },
+        { name: "عبد الرحمن عصفور", course: "CS201", courseName: "هياكل بيانات (CS201)", time: "الإثنين والأربعاء (02:00 م - 04:00 م)" },
+        { name: "عمر خالد", course: "MATH102", courseName: "رياضيات متقطعة (MATH102)", time: "الثلاثاء والخميس (10:00 ص - 12:00 ظ)" }
+    ];
+
+    let selectedTutor = "";
+    const courseSelect = document.getElementById('courseSelect');
+    const searchBtn = document.getElementById('searchBtn');
+    const tutorsList = document.getElementById('tutorsList');
+    const requestFormSection = document.getElementById('requestFormSection');
+    const formTitle = document.getElementById('formTitle');
+
+    function renderTutors(tutors) {
+        tutorsList.innerHTML = '';
+        if (tutors.length === 0) {
+            tutorsList.innerHTML = '<p style="text-align: center; color: #64748b;">لا يوجد مدرسون متاحون لهذا المقرر حالياً.</p>';
+            return;
+        }
+
+        tutors.forEach(tutor => {
+            const card = document.createElement('div');
+            card.className = 'tutor-card';
+            card.innerHTML = `
+                <div class="tutor-info">
+                    <h3>${tutor.name}</h3>
+                    <p><strong>المقرر:</strong> ${tutor.courseName}</p>
+                    <p><strong>الأوقات المتاحة:</strong> ${tutor.time}</p>
+                    <span class="badge">متاح لتقديم الدعم</span>
+                </div>
+                <button class="request-btn" onclick="openRequestForm('${tutor.name}')">طلب جلسة</button>
+            `;
+            tutorsList.appendChild(card);
+        });
+    }
+
+    searchBtn.addEventListener('click', () => {
+        const selectedCourse = courseSelect.value;
+        if (selectedCourse === "") {
+            renderTutors(tutorsData);
+        } else {
+            const filtered = tutorsData.filter(t => t.course === selectedCourse);
+            renderTutors(filtered);
+        }
+    });
+
+    function openRequestForm(tutorName) {
+        selectedTutor = tutorName;
+        formTitle.innerText = "إرسال طلب جلسة إلى: " + tutorName;
+        requestFormSection.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelRequest() {
+        requestFormSection.classList.add('hidden');
+        document.getElementById('sessionForm').reset();
+    }
+
+    function submitSessionRequest(event) {
+        event.preventDefault();
+        const time = document.getElementById('proposedTime').value;
+        const desc = document.getElementById('issueDescription').value;
+        
+        alert(`تم إرسال طلب الجلسة بنجاح إلى المدرس (${selectedTutor})!\nالوقت المقترح: ${time}\nالوصف: ${desc}\n(حالة الطلب الآن: قيد الانتظار)`);
+        cancelRequest();
+    }
+</script>
+
 </body>
 </html>
-
