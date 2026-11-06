@@ -1,0 +1,148 @@
+.site-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.nav-link {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nav-link[aria-current="page"] {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+}
+
+.request-filter-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+}
+
+.request-filter-card select {
+    max-width: 260px;
+}
+
+.requests-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.request-card {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+}
+
+.request-card h3 {
+    margin: 0 0 12px;
+    color: var(--primary);
+}
+
+.request-card p {
+    margin: 6px 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+.request-status {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.request-status--pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.request-status--accepted {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.request-status--rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.requests-empty {
+    padding: 28px 20px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    color: #64748b;
+    text-align: center;
+}
+
+.request-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.request-action {
+    min-width: 90px;
+    padding: 9px 16px;
+}
+
+.request-action--accept {
+    background: #16a34a;
+}
+
+.request-action--accept:hover {
+    background: #15803d;
+}
+
+.request-action--reject {
+    background: #dc2626;
+}
+
+.request-action--reject:hover {
+    background: #b91c1c;
+}
+
+@media (max-width: 600px) {
+    .site-nav {
+        flex-direction: column;
+    }
+
+    .nav-link {
+        text-align: center;
+    }
+
+    .request-filter-card {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .request-filter-card select {
+        max-width: none;
+    }
+
+    .request-actions {
+        flex-direction: column;
+    }
+
+    .request-action {
+        width: 100%;
+    }
+}
