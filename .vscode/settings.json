@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^node --check script\\.js; if \\(\\$LASTEXITCODE -eq 0\\) \\{ git diff --check; if \\(\\$LASTEXITCODE -eq 0\\) \\{ git status --short \\} \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

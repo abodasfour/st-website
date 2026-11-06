@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة التدريس النظير - البحث عن مدرس</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         :root {
             --primary: #2563eb;
@@ -134,6 +135,12 @@
         <p>ابحث عن زميل ليساعدك في المقررات الدراسية</p>
     </div>
 
+    <nav class="site-nav" aria-label="التنقل الرئيسي">
+        <a class="nav-link" href="#tutorsPage" data-page="tutorsPage">البحث عن مدرس</a>
+        <a class="nav-link" href="#incomingRequests" data-page="incomingRequests">الطلبات الواردة</a>
+    </nav>
+
+    <main id="tutorsPage" class="page-view">
     <!-- قسم البحث والتصفية -->
     <div class="filter-card">
         <select id="courseSelect">
@@ -151,6 +158,9 @@
         <form id="sessionForm" onsubmit="submitSessionRequest(event)">
             <label><strong>الوقت المقترح:</strong></label>
             <input type="text" id="proposedTime" placeholder="مثال: الأحد القادم الساعة 4 عصراً" required>
+
+            <label for="studentName"><strong>اسم الطالب:</strong></label>
+            <input type="text" id="studentName" placeholder="اكتب اسمك" required>
             
             <label><strong>شرح الصعوبة أو الاحتياج:</strong></label>
             <textarea id="issueDescription" rows="3" placeholder="اكتب باختصار الموضوع الذي تحتاج مساعدة فيه..." required></textarea>
@@ -184,6 +194,24 @@
             <button class="request-btn" onclick="openRequestForm('عبد الرحمن عصفور')">طلب جلسة</button>
         </div>
     </div>
+    </main>
+
+    <section id="incomingRequests" class="page-view hidden" aria-labelledby="incomingRequestsTitle">
+        <div class="header">
+            <h1 id="incomingRequestsTitle">الطلبات الواردة</h1>
+            <p>راجع طلبات جلسات التدريس الواردة وحالتها الحالية</p>
+        </div>
+        <div class="request-filter-card">
+            <label for="requestStatusFilter"><strong>تصفية حسب الحالة:</strong></label>
+            <select id="requestStatusFilter">
+                <option value="الكل">الكل</option>
+                <option value="قيد الانتظار">قيد الانتظار</option>
+                <option value="مقبول">مقبول</option>
+                <option value="مرفوض">مرفوض</option>
+            </select>
+        </div>
+        <div id="incomingRequestsList" class="requests-grid" aria-live="polite"></div>
+    </section>
 </div>
 
 <script>
@@ -248,12 +276,28 @@
     function submitSessionRequest(event) {
         event.preventDefault();
         const time = document.getElementById('proposedTime').value;
+        const studentName = document.getElementById('studentName').value.trim();
         const desc = document.getElementById('issueDescription').value;
-        
+
+        const tutor = tutorsData.find(item => item.name === selectedTutor);
+        const saved = window.saveIncomingRequest({
+            studentName,
+            course: tutor ? tutor.courseName : "",
+            proposedTime: time,
+            description: desc,
+            tutorName: selectedTutor,
+            status: "قيد الانتظار"
+        });
+        if (!saved) {
+            alert("تعذر حفظ الطلب. يرجى المحاولة مرة أخرى.");
+            return;
+        }
+
         alert(`تم إرسال طلب الجلسة بنجاح إلى المدرس (${selectedTutor})!\nالوقت المقترح: ${time}\nالوصف: ${desc}\n(حالة الطلب الآن: قيد الانتظار)`);
         cancelRequest();
     }
 </script>
+<script src="script.js"></script>
 
 </body>
 </html>
